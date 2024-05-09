@@ -41,7 +41,14 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Page'),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 30.0), // Add top padding here
+          child: Text(
+            'To-Do App',
+            textAlign: TextAlign.center,
+          ),
+        ),
+        centerTitle: true, // Aligns the title to the center
       ),
       body: Center(
         child: Column(
@@ -60,9 +67,18 @@ class HomePage extends StatelessWidget {
               },
               child: const Text('Sign Up'),
             ),
+            SizedBox(height: 40),
+            Text(
+              'Manage your tasks efficiently!\nCreated by Sreekanth R (2022MT93568)',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
+
+
