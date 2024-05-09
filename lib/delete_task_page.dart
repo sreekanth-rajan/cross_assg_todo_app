@@ -13,7 +13,9 @@ class DeleteTaskPage extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Task deleted successfully!')),
       );
-      Navigator.popUntil(context, ModalRoute.withName('/TodoPage')); // Navigate back to TodoPage
+      // Navigator.popUntil(context, ModalRoute.withName('/TodoPage')); // Navigate back to TodoPage
+      Navigator.of(context).popUntil((route) => route.settings.name == '/TodoPage');
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error deleting task: ${response.error!.message}')),
