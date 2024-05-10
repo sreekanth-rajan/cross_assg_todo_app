@@ -26,7 +26,9 @@ class UpdateTaskPage extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Task updated successfully!')),
         );
-        Navigator.pop(context); // Go back to previous screen
+
+        // Pass the updated task back to the previous screen
+        Navigator.pop(context, task);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error updating task: ${response.error!.message}')),
