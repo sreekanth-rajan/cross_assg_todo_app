@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-import 'task_list_page.dart';
+import 'package:todo_app/task_list_page.dart'; // Import TaskListPage
 
 class TodoPage extends StatefulWidget {
   @override
@@ -16,19 +16,24 @@ class _TodoPageState extends State<TodoPage> {
     final String dueDate = _dueDateController.text.trim();
 
     if (title.isNotEmpty && dueDate.isNotEmpty) {
-      final ParseObject newTask = ParseObject('TodoItem')
+      final ParseObject newTask = ParseObject('Task')
         ..set('title', title)
-        ..set('dueDate', dueDate);
+        ..set('dueDate', dueDate)
+        ..set('completed', false); // Assuming new tasks are initially incomplete
 
       final ParseResponse response = await newTask.save();
 
       if (response.success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => TaskListPage(task: newTask),
-          ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Task added successfully!')),
         );
+        
+        // Navigate to TaskListPage with the new task
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => TaskListPage(task: newTask)),
+        );
+
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error adding task: ${response.error!.message}')),
@@ -45,7 +50,7 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todo List'),
+        title: Text('Add Task'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -63,7 +68,7 @@ class _TodoPageState extends State<TodoPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => addItem(context),
+              onPressed: () => addItem(context), // Pass context to addItem function
               child: Text('Add Item'),
             ),
           ],

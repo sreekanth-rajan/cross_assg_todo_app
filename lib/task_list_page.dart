@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'update_task_page.dart';
 import 'delete_task_page.dart';
+import 'todo_page.dart'; // Import TodoPage
 
 class TaskListPage extends StatefulWidget {
   final ParseObject task;
@@ -36,6 +37,42 @@ class _TaskListPageState extends State<TaskListPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error marking task: ${response.error!.message}')),
       );
+    }
+  }
+
+  Future<void> navigateToAddTaskPage() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => TodoPage(),
+      ),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      final newTask = ParseObject('Task')
+        ..set('title', result['title'])
+        ..set('dueDate', result['dueDate'])
+        ..set('completed', result['completed']);
+
+      final ParseResponse response = await newTask.save();
+
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Task added successfully!')),
+        );
+
+        // Navigate to TaskListPage with the new task
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TaskListPage(task: newTask),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error adding task: ${response.error!.message}')),
+        );
+      }
     }
   }
 
@@ -83,6 +120,10 @@ class _TaskListPageState extends State<TaskListPage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: navigateToAddTaskPage,
+        child: Icon(Icons.add),
       ),
     );
   }
