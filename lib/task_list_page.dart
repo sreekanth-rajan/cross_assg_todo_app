@@ -15,28 +15,35 @@ class TaskListPage extends StatefulWidget {
 
 class _TaskListPageState extends State<TaskListPage> {
   late bool _isCompleted;
+  List<String> taskDetails = [];
 
   @override
   void initState() {
     super.initState();
     _isCompleted = widget.task.get('completed') ?? false;
+    taskDetails = [
+      'Title: ${widget.task.get('title')}',
+      'Due Date: ${widget.task.get('dueDate')}'
+    ];
   }
 
-  Future<void> updateTaskCompletion(bool isComplete) async {
-    widget.task.set('completed', isComplete);
-    final ParseResponse response = await widget.task.save();
+  Future<void> updateTaskCompletion(bool? isComplete) async {
+    if (isComplete != null) {
+      widget.task.set('completed', isComplete);
+      final ParseResponse response = await widget.task.save();
 
-    if (response.success) {
-      setState(() {
-        _isCompleted = isComplete;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Task marked as ${isComplete ? 'complete' : 'incomplete'}!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error marking task: ${response.error!.message}')),
-      );
+      if (response.success) {
+        setState(() {
+          _isCompleted = isComplete;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Task marked as ${isComplete ? 'complete' : 'incomplete'}!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error marking task: ${response.error!.message}')),
+        );
+      }
     }
   }
 
@@ -87,11 +94,10 @@ class _TaskListPageState extends State<TaskListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Title: ${widget.task.get('title')}'),
-            Text('Due Date: ${widget.task.get('dueDate')}'),
+            for (var detail in taskDetails) Text(detail),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
+            InkWell(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -99,10 +105,11 @@ class _TaskListPageState extends State<TaskListPage> {
                   ),
                 );
               },
-              child: Text('Update Task'),
+              child: Icon(Icons.edit),
             ),
-            ElevatedButton(
-              onPressed: () {
+            SizedBox(height: 10),
+            InkWell(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -110,11 +117,13 @@ class _TaskListPageState extends State<TaskListPage> {
                   ),
                 );
               },
-              child: Text('Delete Task'),
+              child: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
             ),
             SizedBox(height: 20),
-            Text('Mark as Complete:'),
-            Switch(
+            Checkbox(
               value: _isCompleted,
               onChanged: updateTaskCompletion,
             ),
