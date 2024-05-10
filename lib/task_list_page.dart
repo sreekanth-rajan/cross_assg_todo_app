@@ -15,16 +15,11 @@ class TaskListPage extends StatefulWidget {
 
 class _TaskListPageState extends State<TaskListPage> {
   late bool _isCompleted;
-  List<String> taskDetails = [];
 
   @override
   void initState() {
     super.initState();
     _isCompleted = widget.task.get('completed') ?? false;
-    taskDetails = [
-      'Title: ${widget.task.get('title')}',
-      'Due Date: ${widget.task.get('dueDate')}'
-    ];
   }
 
   Future<void> updateTaskCompletion(bool? isComplete) async {
@@ -91,41 +86,83 @@ class _TaskListPageState extends State<TaskListPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            for (var detail in taskDetails) Text(detail),
-            SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => UpdateTaskPage(task: widget.task),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
                   ),
-                );
-              },
-              child: Icon(Icons.edit),
-            ),
-            SizedBox(height: 10),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => DeleteTaskPage(task: widget.task),
-                  ),
-                );
-              },
-              child: Icon(
-                Icons.delete,
-                color: Colors.red,
+                ],
+              ),
+              padding: EdgeInsets.all(8.0),
+              child: Checkbox(
+                value: _isCompleted,
+                onChanged: updateTaskCompletion,
               ),
             ),
-            SizedBox(height: 20),
-            Checkbox(
-              value: _isCompleted,
-              onChanged: updateTaskCompletion,
+            SizedBox(width: 8.0),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.task.get('title'),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(width: 8.0),
+                    Text(
+                      'Due: ${widget.task.get('dueDate')}',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    SizedBox(width: 8.0),
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => UpdateTaskPage(task: widget.task),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(width: 8.0),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DeleteTaskPage(task: widget.task),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
